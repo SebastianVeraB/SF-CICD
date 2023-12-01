@@ -14,7 +14,7 @@ jobs:
   qa-check-only:
     if: github.event_name == 'pull_request' || github.event.action == 'labeled'
     runs-on: ubuntu-latest
-    environment: qa
+    environment: QA
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -27,8 +27,9 @@ jobs:
 
   qa-deploy:
     if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'ready to merge')
-    needs: check-only
+    needs: qa-check-only
     runs-on: ubuntu-latest
+    environment: QA
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -58,7 +59,7 @@ jobs:
   uat-deploy:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-uat')
     runs-on: ubuntu-latest
-    environment: uat
+    environment: UAT
     needs: qa-deploy
     steps:
     - name: Checkout code
@@ -72,7 +73,7 @@ jobs:
   prod-deploy:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-prod')
     runs-on: ubuntu-latest
-    environment: prod
+    environment: PROD
     needs: qa-deploy
     steps:
     - name: Checkout code
