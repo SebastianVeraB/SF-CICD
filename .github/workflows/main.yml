@@ -17,7 +17,7 @@ jobs:
     - name: Run check-only
       run: echo "Run check-only deployment script here"
       # Replace with your check-only deployment script/command
-      
+
   deploy:
     if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'ready to merge')
     needs: check-only
@@ -33,9 +33,9 @@ jobs:
     - name: Merge PR
       if: success()
       uses: reitermarkus/automerge@v2
-        with:
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
-          merge-method: squash
-          do-not-merge-labels: never-merge
-          required-labels: ready-to-merge
-          pull-request: ${{ github.event.inputs.pull-request }}
+      with:
+        token: ${{ secrets.MY_GITHUB_TOKEN }}
+        merge-method: squash
+        do-not-merge-labels: never-merge
+        required-labels: ready-to-merge
+        pull-request: ${{ github.event.inputs.pull-request }}
