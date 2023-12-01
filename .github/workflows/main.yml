@@ -5,20 +5,27 @@ on:
     branches:
       - main
     types: [opened, synchronize, labeled]
+  push:
+    tags:
+      - '*-uat'  # Trigger for UAT deployment
+      - '*-prod' # Trigger for PROD deployment
 
 jobs:
-  check-only:
+  qa-check-only:
     if: github.event_name == 'pull_request' || github.event.action == 'labeled'
     runs-on: ubuntu-latest
+    environment: qa
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Run check-only
-      run: echo "Run check-only deployment script here"
+      run: echo "Deploy to QA using environment secrets for $ENV_NAME"
+      env:
+        ENV_NAME: ${{ secrets.ENV_NAME }}
       # Replace with your check-only deployment script/command
 
-  deploy:
+  qa-deploy:
     if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'ready to merge')
     needs: check-only
     runs-on: ubuntu-latest
@@ -26,8 +33,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Run Check-Only Deployment Again
+      run: echo "Run check-only deployment script here"
+      # Replace with your check-only deployment script/command
+
     - name: Deploy to Salesforce
-      run: echo "Run actual deployment script here"
+      run: echo "Deploy to QA using environment secrets for $ENV_NAME"
+      env:
+        ENV_NAME: ${{ secrets.ENV_NAME }}
       # Replace with your actual deployment script/command
 
     - name: Merge PR
@@ -41,3 +54,31 @@ jobs:
             repo: context.repo.repo,
             pull_number: context.payload.pull_request.number
           });
+  
+  uat-deploy:
+    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-uat')
+    runs-on: ubuntu-latest
+    environment: uat
+    needs: qa-deploy
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to UAT
+      run: echo "Deploy to UAT using environment $ENV_NAME"
+      env:
+        ENV_NAME: ${{ secrets.ENV_NAME }}
+
+  prod-deploy:
+    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-prod')
+    runs-on: ubuntu-latest
+    environment: prod
+    needs: qa-deploy
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to PROD
+      run: echo "Deploy to PROD using environment $ENV_NAME"
+      env:
+        ENV_NAME: ${{ secrets.ENV_NAME }}
