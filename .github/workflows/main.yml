@@ -32,9 +32,10 @@ jobs:
 
     - name: Merge PR
       if: success()
-      uses: juliangruber/merge-pull-request-action@v1
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        number: 1
-        method: squash # merge rebase
-        repo: juliangruber/octokit-action
+      uses: reitermarkus/automerge@v2
+        with:
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          merge-method: squash
+          do-not-merge-labels: never-merge
+          required-labels: ready-to-merge
+          pull-request: ${{ github.event.inputs.pull-request }}
