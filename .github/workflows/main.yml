@@ -56,7 +56,7 @@ jobs:
             pull_number: context.payload.pull_request.number
           });
   
-  uat-deploy:
+  uat-check-only:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-uat')
     runs-on: ubuntu-latest
     environment: UAT
@@ -70,11 +70,39 @@ jobs:
       env:
         ENV_NAME: ${{ secrets.ENV_NAME }}
 
+  uat-deploy:
+    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-uat')
+    runs-on: ubuntu-latest
+    environment: UAT
+    needs: uat-check-only
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to UAT
+      run: echo "Deploy to UAT using environment $ENV_NAME"
+      env:
+        ENV_NAME: ${{ secrets.ENV_NAME }}
+
+  prod-check-only:
+    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-prod')
+    runs-on: ubuntu-latest
+    environment: PROD
+    needs: uat-deploy
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to PROD
+      run: echo "Deploy to PROD using environment $ENV_NAME"
+      env:
+        ENV_NAME: ${{ secrets.ENV_NAME }}
+
   prod-deploy:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-prod')
     runs-on: ubuntu-latest
     environment: PROD
-    needs: qa-deploy
+    needs: prod-check-only
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
