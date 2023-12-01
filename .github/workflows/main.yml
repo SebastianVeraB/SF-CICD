@@ -8,7 +8,7 @@ on:
 
 jobs:
   check-only:
-    if: github.event_name == 'pull_request' && github.event.action != 'labeled'
+    if: github.event_name == 'pull_request' || github.event.action == 'labeled'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -22,13 +22,10 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'ready to merge')
     needs: check-only
     runs-on: ubuntu-latest
+    needs: check-only
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Run check-only
-      run: echo "Run check-only deployment script here"
-      # Replace with your check-only deployment script/command
 
     - name: Deploy to Salesforce
       run: echo "Run actual deployment script here"
