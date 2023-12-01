@@ -32,6 +32,9 @@ jobs:
 
     - name: Merge PR
       if: success()
-      uses: "pascalgn/automerge-action@v0.15.6"
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      uses: juliangruber/merge-pull-request-action@v1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        number: 1
+        method: squash # merge rebase
+        repo: juliangruber/octokit-action
