@@ -29,3 +29,27 @@ jobs:
     - name: Deploy to Salesforce
       run: echo "Run actual deployment script here"
       # Replace with your actual deployment script/command
+      
+    - name: Merge PR
+      if: success()
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.pulls.merge({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number
+          });
+
+    - name: Delete branch
+      if: success()
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.git.deleteRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'heads/' + context.payload.pull_request.head.ref
+          });
