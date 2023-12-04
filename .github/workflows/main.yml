@@ -9,7 +9,6 @@ on:
     tags:
       - '*-uat'  
       - '*-prod' 
-
 jobs:
   qa-check-only:
     if: github.event_name == 'pull_request' || github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'ready to merge')
