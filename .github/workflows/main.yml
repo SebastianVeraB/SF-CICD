@@ -7,8 +7,8 @@ on:
     types: [opened, synchronize, labeled]
   push:
     tags:
-      - '*-uat'  # Trigger for UAT deployment
-      - '*-prod' # Trigger for PROD deployment
+      - '*-uat'  
+      - '*-prod' 
 
 jobs:
   qa-check-only:
@@ -20,9 +20,8 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run check-only
-      run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using $ENV_KEY"
-      # Replace with your check-only deployment script/command
-
+      run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
+      
   qa-deploy:
     if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'ready to merge')
     needs: qa-check-only
