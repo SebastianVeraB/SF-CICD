@@ -12,7 +12,7 @@ on:
 
 jobs:
   qa-check-only:
-    if: github.event_name == 'pull_request' || github.event.action == 'labeled'
+    if: github.event_name == 'pull_request' || github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'ready to merge')
     runs-on: ubuntu-latest
     environment: QA
     steps:
@@ -66,8 +66,6 @@ jobs:
 
     - name: Deploy to UAT
       run: echo "Deploy to UAT using environment $ENV_NAME"
-      env:
-        ENV_NAME: ${{ secrets.ENV_NAME }}
 
   uat-deploy:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-uat')
@@ -80,8 +78,6 @@ jobs:
 
     - name: Deploy to UAT
       run: echo "Deploy to UAT using environment $ENV_NAME"
-      env:
-        ENV_NAME: ${{ secrets.ENV_NAME }}
 
   prod-check-only:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-prod')
@@ -94,8 +90,6 @@ jobs:
 
     - name: Deploy to PROD
       run: echo "Deploy to PROD using environment $ENV_NAME"
-      env:
-        ENV_NAME: ${{ secrets.ENV_NAME }}
 
   prod-deploy:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-prod')
@@ -108,5 +102,3 @@ jobs:
 
     - name: Deploy to PROD
       run: echo "Deploy to PROD using environment $ENV_NAME"
-      env:
-        ENV_NAME: ${{ secrets.ENV_NAME }}
