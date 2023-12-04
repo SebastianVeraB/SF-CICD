@@ -60,7 +60,6 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-uat')
     runs-on: ubuntu-latest
     environment: UAT
-    needs: qa-deploy
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
