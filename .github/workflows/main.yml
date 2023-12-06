@@ -35,17 +35,23 @@ jobs:
     - name: Deploy
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
+    - name: Generate Tag
+      id: generate_tag
+      run: |
+        # Obtener la versión actual
+        CURRENT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
+        echo "Current version: $CURRENT_VERSION"
+        # Incrementar la versión (este es un ejemplo simple, puede necesitar ajustes)
+        NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print "uat-" $1 "." $2 "." $3+1}')
+        echo "New version: $NEW_VERSION"
+        echo "::set-output name=NEW_VERSION::$NEW_VERSION"
+
     
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.64.0
       env:
         GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        WITH_V: true
-        PRERELEASE: true
-        PRERELEASE_SUFFIX: uat
-        TAG_CONTEXT: branch
-        DEFAULT_BUMP: patch
-        RELEASE_BRANCHES: main
+        CUSTOM_TAG: ${{ steps.generate_tag.outputs.NEW_VERSION }}
   
 
   uat-deploy:
