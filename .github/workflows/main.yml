@@ -45,9 +45,7 @@ jobs:
         NEXT_TAG_INCREMENT=$((TAG_INCREMENT + 1))
         NEW_TAG="$TAG_BASE.$NEXT_TAG_INCREMENT-uat"
         git tag $NEW_TAG
-        git push origin $NEW_TAG
-      env:
-        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} $NEW_TAG
 
     
 
