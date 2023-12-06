@@ -36,9 +36,12 @@ jobs:
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
     
     - name: version-tag-major
+      if: success()
       env:
         GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
       run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
         git fetch --tags
         TAG=$(git tag -l '*-uat' --sort=-v:refname | head -n 1 | awk -F '-' '{print $1}')
         TAG_BASE=$(echo $TAG | awk -F '.' '{print $1 "." $2}')
@@ -46,7 +49,7 @@ jobs:
         NEXT_TAG_INCREMENT=$((TAG_INCREMENT + 1))
         NEW_TAG="$TAG_BASE.$NEXT_TAG_INCREMENT-uat"
         git tag $NEW_TAG
-        git push origin $NEW_TAG
+        git push -f origin $NEW_TAG
   
 
   uat-deploy:
