@@ -38,13 +38,14 @@ jobs:
     - name: Generate Tag
       id: generate_tag
       run: |
-        # Obtener la versión actual
-        CURRENT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
-        echo "Current version: $CURRENT_VERSION"
-        # Incrementar la versión (este es un ejemplo simple, puede necesitar ajustes)
-        NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print "uat-" $1 "." $2 "." $3+1}')
-        echo "New version: $NEW_VERSION"
-        echo "::set-output name=NEW_VERSION::$NEW_VERSION"
+        git fetch --tags
+        TAG=$(git tag -l '*-uat' --sort=-v:refname | head -n 1 | awk -F '-' '{print $1}')
+        TAG_BASE=$(echo $TAG | awk -F '.' '{print $1 "." $2}')
+        TAG_INCREMENT=$(echo $TAG | awk -F '.' '{print $3}')
+        NEXT_TAG_INCREMENT=$((TAG_INCREMENT + 1))
+        NEW_TAG="$TAG_BASE.$NEXT_TAG_INCREMENT-uat"
+        echo "New version: $NEW_TAG"
+        echo "::set-output name=NEW_VERSION::$NEW_TAG"
 
     
     - name: Bump version and push tag
