@@ -47,7 +47,6 @@ jobs:
         echo "New version: $NEW_TAG"
         echo "::set-output name=NEW_VERSION::$NEW_TAG"
 
-    
     - name: Bump version and push tag
       uses: anothrNick/github-tag-action@1.64.0
       env:
