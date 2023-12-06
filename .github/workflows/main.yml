@@ -34,9 +34,10 @@ jobs:
 
     - name: Deploy
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
+
     
     - name: Bump version and push tag
-      uses: anothrNick/github-tag-action@1.26.0
+      uses: anothrNick/github-tag-action@1.64.0
       env:
         GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         WITH_V: false
