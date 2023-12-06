@@ -6,12 +6,15 @@ on:
       - main
     types: [opened, synchronize, labeled]
   push:
+    branches:
+      - main  # Se agrega para desencadenar despliegue en QA después de la fusión
     tags:
       - '*-uat'  
       - '*-prod' 
+
 jobs:
   qa-check-only:
-    if: github.event_name == 'pull_request' || github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'ready to merge')
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     environment: QA
     steps:
@@ -22,31 +25,17 @@ jobs:
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
       
   qa-deploy:
-    if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'ready to merge')
-    needs: qa-check-only
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: QA
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Check-Only
-      run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
-
     - name: Deploy
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
-    - name: Merge PR
-      if: success()
-      uses: actions/github-script@v3
-      with:
-        github-token: ${{secrets.MY_GITHUB_TOKEN}}
-        script: |
-          github.pulls.merge({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.payload.pull_request.number
-          });
+    
   
   uat-check-only:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-uat')
