@@ -37,15 +37,10 @@ jobs:
     
     - name: Generate and Push UAT Tag
       if: success()
-      run: |
-        git fetch --tags
-        TAG=$(git tag -l '*-uat' --sort=-v:refname | head -n 1 | awk -F '-' '{print $1}')
-        TAG_BASE=$(echo $TAG | awk -F '.' '{print $1 "." $2}')
-        TAG_INCREMENT=$(echo $TAG | awk -F '.' '{print $3}')
-        NEXT_TAG_INCREMENT=$((TAG_INCREMENT + 1))
-        NEW_TAG="$TAG_BASE.$NEXT_TAG_INCREMENT-uat"
-        git tag $NEW_TAG
-        git push https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }} $NEW_TAG
+      uses: anothrNick/github-tag-action@1.36.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        WITH_V: true
 
     
 
