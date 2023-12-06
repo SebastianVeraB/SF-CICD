@@ -36,18 +36,18 @@ jobs:
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
     
     - name: version-tag-major
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        run: |
-          git fetch --tags
-          TAG=$(git tag -l '*-uat' --sort=-v:refname | head -n 1 | awk -F '-' '{print $1}')
-          TAG_BASE=$(echo $TAG | awk -F '.' '{print $1 "." $2}')
-          TAG_INCREMENT=$(echo $TAG | awk -F '.' '{print $3}')
-          NEXT_TAG_INCREMENT=$((TAG_INCREMENT + 1))
-          NEW_TAG="$TAG_BASE.$NEXT_TAG_INCREMENT-uat"
-          git tag $NEW_TAG
-          git push origin $NEW_TAG
-    
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      run: |
+        git fetch --tags
+        TAG=$(git tag -l '*-uat' --sort=-v:refname | head -n 1 | awk -F '-' '{print $1}')
+        TAG_BASE=$(echo $TAG | awk -F '.' '{print $1 "." $2}')
+        TAG_INCREMENT=$(echo $TAG | awk -F '.' '{print $3}')
+        NEXT_TAG_INCREMENT=$((TAG_INCREMENT + 1))
+        NEW_TAG="$TAG_BASE.$NEXT_TAG_INCREMENT-uat"
+        git tag $NEW_TAG
+        git push origin $NEW_TAG
+  
 
   uat-deploy:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, '-uat')
