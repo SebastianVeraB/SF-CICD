@@ -9,8 +9,8 @@ on:
     branches:
       - main 
     tags:
-      - 'uat'  
-      - 'prod' 
+      - 'qa-d-'  
+      - 'uat-d-' 
 
 jobs:
   qa-check-only:
