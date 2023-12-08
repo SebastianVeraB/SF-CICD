@@ -100,9 +100,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         CUSTOM_TAG: ${{ steps.generate_tag.outputs.NEW_VERSION }}
   
- 
-
-
   prod-deploy:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, 'uat')
     runs-on: ubuntu-latest
