@@ -64,7 +64,7 @@ jobs:
   
 
   uat-deploy:
-    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, 'qa')
+    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, 'qa-d')
     runs-on: ubuntu-latest
     environment: UAT
     steps:
