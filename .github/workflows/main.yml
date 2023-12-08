@@ -7,10 +7,10 @@ on:
     types: [opened, synchronize, labeled]
   push:
     branches:
-      - main  # Se agrega para desencadenar despliegue en QA después de la fusión
+      - main 
     tags:
-      - '*-uat'  
-      - '*-prod' 
+      - 'uat'  
+      - 'prod' 
 
 jobs:
   qa-check-only:
@@ -90,8 +90,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      with:
-        fetch-depth: '0'
 
     - name: Deploy to PROD
       run: echo "Deploy to PROD using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
@@ -101,7 +99,6 @@ jobs:
       uses: anothrNick/github-tag-action@1.64.0
       env:
         GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        CUSTOM_TAG: ${{ steps.generate_tag.outputs.NEW_VERSION }}
         WITH_V: true
   
 
