@@ -9,8 +9,7 @@ on:
     branches:
       - main 
     tags:
-      - 'QA'  
-      - '*' 
+      - 'Q*'
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
