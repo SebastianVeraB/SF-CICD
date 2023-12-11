@@ -43,8 +43,10 @@ jobs:
 
     - name: Create QA Tag
       run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        git config --global --add safe.directory /github/workspace
         if git rev-parse -q --verify "refs/tags/QA"; then
-          git config --global --add safe.directory /github/workspace
           git tag -d QA
           git push --delete origin QA
         fi
