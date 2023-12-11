@@ -49,7 +49,7 @@ jobs:
           git tag -d QA
           git push --delete origin QA
         fi
-        
+
     - name: Create QA Tag
       uses: anothrNick/github-tag-action@1.64.0
       if: success()
@@ -78,8 +78,13 @@ jobs:
           git tag -d UAT
           git push --delete origin UAT
         fi
-        git tag UAT
-        git push origin UAT
+
+    - name: Create UAT Tag
+      uses: anothrNick/github-tag-action@1.64.0
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        CUSTOM_TAG: 'UAT'
   
   prod-deploy:
     if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, 'UAT')
