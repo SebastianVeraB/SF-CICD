@@ -9,7 +9,7 @@ on:
     branches:
       - main 
     tags:
-      - 'Q*'
+      - 'QA'
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
@@ -40,7 +40,7 @@ jobs:
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
      
 
-    - name: Create QA Tag
+    - name: Delete QA Tag
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
@@ -49,8 +49,13 @@ jobs:
           git tag -d QA
           git push --delete origin QA
         fi
-        git tag QA
-        git push origin QA
+        
+    - name: Create QA Tag
+      uses: anothrNick/github-tag-action@1.64.0
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        CUSTOM_TAG: 'QA'
 
   
   uat-deploy:
