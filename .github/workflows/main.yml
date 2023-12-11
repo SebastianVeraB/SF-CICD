@@ -67,8 +67,8 @@ jobs:
 
     - name: Create UAT Tag
       run: |
+        git config --global --add safe.directory /github/workspace
         if git rev-parse -q --verify "refs/tags/UAT"; then
-          git config --global --add safe.directory /github/workspace
           git tag -d UAT
           git push --delete origin UAT
         fi
