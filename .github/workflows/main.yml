@@ -10,7 +10,7 @@ on:
       - main 
     tags:
       - 'QA'  
-      - 'UAT' 
+      - '*' 
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
