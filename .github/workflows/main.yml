@@ -41,21 +41,19 @@ jobs:
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
      
 
-    - name: Delete old QA tag
+    - name: Create QA Tag
       run: |
         if git rev-parse -q --verify "refs/tags/QA"; then
           git config --global --add safe.directory /github/workspace
           git tag -d QA
           git push --delete origin QA
         fi
-
-    - name: Create new QA tag
-      run: |
         git tag QA
         git push origin QA
+
   
   uat-deploy:
-    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, 'qa-d')
+    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, 'QA')
     runs-on: ubuntu-latest
     environment: UAT
     steps:
@@ -67,32 +65,18 @@ jobs:
     - name: Deploy to UAT
       run: echo "Deploy to UAT using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
-    - name: Generate Tag
-      id: generate_tag
+    - name: Create UAT Tag
       run: |
-        git fetch --tags
-        TAG=$(git tag -l 'uat-d-*' --sort=-v:refname | head -n 1)
-        if [[ -z "$TAG" ]]; then
-          # No tags found, start with a default tag, e.g., 0.0.0
-          NEW_TAG="uat-d-1"
-        else
-          TAG_BASE=$(echo $TAG | awk -F '-' '{print $1 "-" $2}')
-          TAG_INCREMENT=$(echo $TAG | awk -F '-' '{print $3}')
-          NEXT_TAG_INCREMENT=$((TAG_INCREMENT + 1))
-          NEW_TAG="$TAG_BASE-$NEXT_TAG_INCREMENT"
+        if git rev-parse -q --verify "refs/tags/UAT"; then
+          git config --global --add safe.directory /github/workspace
+          git tag -d UAT
+          git push --delete origin UAT
         fi
-        echo "New version: $NEW_TAG"
-        echo "::set-output name=NEW_VERSION::$NEW_TAG"
-
-    - name: Bump version and push tag
-      uses: anothrNick/github-tag-action@1.64.0
-      if: success()
-      env:
-        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        CUSTOM_TAG: ${{ steps.generate_tag.outputs.NEW_VERSION }}
+        git tag UAT
+        git push origin UAT
   
   prod-deploy:
-    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, 'uat')
+    if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, 'UAT')
     runs-on: ubuntu-latest
     environment: PROD
     steps:
