@@ -100,6 +100,15 @@ jobs:
     - name: Deploy to PROD
       run: echo "Deploy to PROD using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
+  create-version:
+    needs: prod-deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: 'main'
+        
     - name: Running Semantic Release
       run: npx semantic-release --branches main
         
