@@ -27,14 +27,6 @@ jobs:
     - name: Run check-only
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 'lts/*'
-
-    - name: Install dependencies
-      run: npm clean-install
-
     - name: Running Semantic Release
       run: npx semantic-release
 
