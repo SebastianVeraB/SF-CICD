@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: QA
     steps:
+
     - name: Checkout code
       uses: actions/checkout@v3
       with:
@@ -36,7 +37,6 @@ jobs:
     - name: Deploy
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
      
-
     - name: Delete QA Tag
       run: |
         git config --global user.email "action@github.com"
@@ -90,7 +90,7 @@ jobs:
     environment: PROD
     needs: uat-deploy
     steps:
-      
+
     - name: Checkout code
       uses: actions/checkout@v3
 
