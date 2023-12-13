@@ -27,6 +27,7 @@ jobs:
     - name: Run check-only
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
+
   qa-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -99,12 +100,8 @@ jobs:
     - name: Deploy to PROD
       run: echo "Deploy to PROD using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
-    - name: Push Tag
-      if: success()
-      uses: anothrNick/github-tag-action@1.64.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        WITH_V: true
+    - name: Running Semantic Release
+      run: npx semantic-release
         
 
   
