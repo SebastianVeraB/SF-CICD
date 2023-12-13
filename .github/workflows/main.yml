@@ -14,7 +14,6 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
-
 jobs:
   qa-check-only:
     if: github.event_name == 'pull_request'
@@ -26,7 +25,6 @@ jobs:
 
     - name: Run check-only
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
-
 
   qa-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -59,7 +57,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         CUSTOM_TAG: 'QA'
 
-  
   uat-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
