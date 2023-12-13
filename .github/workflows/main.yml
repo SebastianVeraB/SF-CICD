@@ -61,9 +61,10 @@ jobs:
 
   
   uat-deploy:
-    if: github.ref == 'refs/tags/QA'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: UAT
+    needs: qa-deploy
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -90,9 +91,10 @@ jobs:
         CUSTOM_TAG: 'UAT'
   
   prod-deploy:
-    if: github.ref == 'refs/tags/UAT'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: PROD
+    needs: uat-deploy
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -101,6 +103,7 @@ jobs:
       run: echo "Deploy to PROD using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
   create-version:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: prod-deploy
     runs-on: ubuntu-latest
     steps:
