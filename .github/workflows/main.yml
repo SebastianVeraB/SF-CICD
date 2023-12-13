@@ -101,7 +101,7 @@ jobs:
       run: echo "Deploy to PROD using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
     - name: Running Semantic Release
-      run: npx semantic-release -c release.config
+      run: npx semantic-release --branches main
         
 
   
