@@ -26,12 +26,16 @@ jobs:
         mkdir sfdx-cli
         tar xJf sf-linux-x64.tar.xz -C sfdx-cli --strip-components 1
         echo "$PWD/sfdx-cli/bin" >> $GITHUB_PATH
+
     - name: Auth
       run: |
         openssl rsa -passin pass:${{secrets.SERVER_KEY_PASS}} -in ${{ vars.ENV_NAME }}/server.pass.key -out server.key
         sf org login jwt --username ${{secrets.USER_NAME}} --jwt-key-file server.key --alias qa-org --set-default --client-id ${{secrets.CLIENT_ID}}
 
     - name: Run check-only
+      run: sf project deploy validate --source-dir force-app/main/default/
+
+    - name: Logout
       run: sf org logout --all -p
 
   qa-deploy:
