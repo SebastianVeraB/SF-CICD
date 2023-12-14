@@ -31,7 +31,7 @@ jobs:
         sf org login jwt --username ${{secrets.USER_NAME}} --jwt-key-file QA/server.key --alias qa-org --set-default --client-id ${{secrets.CLIENT_ID}}
 
     - name: Run check-only
-      run: sf org logout --all
+      run: sf org logout --all -p
 
   qa-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
