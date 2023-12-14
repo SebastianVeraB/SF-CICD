@@ -31,7 +31,7 @@ jobs:
         sf org login jwt --username sebastian.vera@cicd.com.qa --jwt-key-file QA/server.key --alias qa-org --set-default --client-id 3MVG9Rr0EZ2YOVMayV99wdsg0asxgMQ_FSLteN1OyZoDav7ULpPgstUKSNeaayEZQzfD2cjWXO9dkV4zSW_AV
 
     - name: Run check-only
-      run: sf org logout
+      run: sf org logout --all
 
   qa-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
