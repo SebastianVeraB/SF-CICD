@@ -20,8 +20,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Install SFDX
+      run: |
+        wget https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
+        mkdir sfdx-cli
+        tar xJf sf-linux-x64.tar.xz -C sfdx-cli --strip-components 1
+        echo "$PWD/sfdx-cli/bin" >> $GITHUB_PATH
+    - name: Auth
+      run: |
+        sf org login jwt --username sebastian.vera@cicd.com.qa --jwt-key-file QA/server.key --alias qa-org --set-default --client-id 3MVG9Rr0EZ2YOVMayV99wdsg0asxgMQ_FSLteN1OyZoDav7ULpPgstUKSNeaayEZQzfD2cjWXO9dkV4zSW_AV
+
     - name: Run check-only
-      run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
+      run: sf org logout
 
   qa-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
