@@ -28,7 +28,8 @@ jobs:
         echo "$PWD/sfdx-cli/bin" >> $GITHUB_PATH
     - name: Auth
       run: |
-        sf org login jwt --username ${{secrets.USER_NAME}} --jwt-key-file QA/server.key --alias qa-org --set-default --client-id ${{secrets.CLIENT_ID}}
+        openssl rsa -passin pass:${{secrets.SERVER_KEY_PASS}} -in ${{ vars.ENV_NAME }}/server.pass.key -out server.key
+        sf org login jwt --username ${{secrets.USER_NAME}} --jwt-key-file server.key --alias qa-org --set-default --client-id ${{secrets.CLIENT_ID}}
 
     - name: Run check-only
       run: sf org logout --all -p
