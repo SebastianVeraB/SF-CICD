@@ -38,6 +38,22 @@ jobs:
     - name: Logout
       run: sf org logout --all -p
 
+  create-version:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: 'main'
+        persist-credentials: false
+        
+    - name: Running Semantic Release
+      run: |
+        npm -g install @semantic-release/git semantic-release && semantic-release
+        npx semantic-release --branches main
+
   qa-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -68,7 +84,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         CUSTOM_TAG: 'QA'
-
+        
   uat-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -112,19 +128,7 @@ jobs:
     - name: Deploy to PROD
       run: echo "Deploy to PROD using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
-  create-version:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: prod-deploy
-    runs-on: ubuntu-latest
-    steps:
 
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        ref: 'main'
-        
-    - name: Running Semantic Release
-      run: npx semantic-release --branches main
         
 
   
