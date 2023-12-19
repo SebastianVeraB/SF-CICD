@@ -1,7 +1,7 @@
 {
   "name": "salesforce-app",
   "private": true,
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "Salesforce App",
   "scripts": {
     "lint": "eslint **/{aura,lwc}/**",
