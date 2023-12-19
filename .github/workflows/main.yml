@@ -23,7 +23,6 @@ jobs:
     - name: Run check-only
       run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
 
-
   create-version:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
