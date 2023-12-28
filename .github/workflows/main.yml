@@ -39,8 +39,23 @@ jobs:
       with:
         fetch-depth: '0'
 
-    - name: Deploy
-      run: echo "Deploy to QA using environment secrets for ${{ vars.ENV_NAME }} using ${{secrets.ENV_KEY}}"
+    - name: Install SFDX
+      run: |
+        wget https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz
+        mkdir sfdx-cli
+        tar xJf sf-linux-x64.tar.xz -C sfdx-cli --strip-components 1
+        echo "$PWD/sfdx-cli/bin" >> $GITHUB_PATH
+
+    - name: Auth
+      run: |
+        openssl rsa -passin pass:${{secrets.SERVER_KEY_PASS}} -in ${{ vars.ENV_NAME }}/server.pass.key -out server.key
+        sf org login jwt --username ${{secrets.USER_NAME}} --jwt-key-file server.key --alias qa-org --set-default --client-id ${{secrets.CLIENT_ID}}
+
+    - name: Run check-only
+      run: sf project deploy validate --source-dir force-app/main/default/
+
+    - name: Logout
+      run: sf org logout --all -p
      
     - name: Delete QA Tag
       run: |
