@@ -51,7 +51,7 @@ jobs:
         openssl rsa -passin pass:${{secrets.SERVER_KEY_PASS}} -in ${{ vars.ENV_NAME }}/server.pass.key -out server.key
         sf org login jwt --username ${{secrets.USER_NAME}} --jwt-key-file server.key --alias qa-org --set-default --client-id ${{secrets.CLIENT_ID}}
 
-    - name: Run check-only
+    - name: Run Deploy
       run: sf project deploy start -l RunLocalTests --source-dir force-app/main/default/
 
     - name: Logout
