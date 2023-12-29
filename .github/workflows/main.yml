@@ -5,7 +5,7 @@ on:
     branches:
       - main 
 env:
-  GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
 
@@ -46,6 +46,7 @@ jobs:
         tar xJf sf-linux-x64.tar.xz -C sfdx-cli --strip-components 1
         echo "$PWD/sfdx-cli/bin" >> $GITHUB_PATH
 
+
     - name: Auth
       run: |
         openssl rsa -passin pass:${{secrets.SERVER_KEY_PASS}} -in ${{ vars.ENV_NAME }}/server.pass.key -out server.key
@@ -57,7 +58,7 @@ jobs:
     - name: Logout
       run: sf org logout --all -p
      
-    - name: Delete QA Tag
+    - name: Create QA Tag
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
@@ -66,13 +67,8 @@ jobs:
           git tag -d QA
           git push --delete origin QA
         fi
-
-    - name: Create QA Tag
-      uses: anothrNick/github-tag-action@1.64.0
-      if: success()
-      env:
-        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        CUSTOM_TAG: 'QA'
+        git tag QA
+        git push origin QA
 
 
   uat-deploy:
